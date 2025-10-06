@@ -1,4 +1,4 @@
-# 🌐 English-Vietnamese Translator & IPA ✨  
+# 🌐 IPA Free — English-Vietnamese Translator & IPA ✨  
 **Version:** 1.0.0  
 
 A simple, fast, and free translation tool built with **HTML**, **Tailwind CSS**, and **JavaScript**.  
@@ -7,7 +7,7 @@ This application allows users to translate text from English to Vietnamese, prov
 ---
 
 ## 🖼️ Preview  
-### 🚀 Live Demo  
+### 🚀 Live Production  
 👉 [https://ipafree.surge.sh/](https://ipafree.surge.sh/)
 
 ---
