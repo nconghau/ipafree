@@ -2,52 +2,15 @@
 <html lang="vi">
 
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Trình dịch Anh-Việt & IPA</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
     rel="stylesheet">
-  <style>
-    body {
-      font-family: 'Plus Jakarta Sans', sans-serif;
-    }
-
-    .output-box {
-      min-height: 8rem;
-      /* 128px */
-    }
-
-    /* Custom scrollbar for better look */
-    textarea::-webkit-scrollbar {
-      width: 8px;
-    }
-
-    textarea::-webkit-scrollbar-track {
-      background: #2d3748;
-      /* gray-800 */
-    }
-
-    textarea::-webkit-scrollbar-thumb {
-      background-color: #4a5568;
-      /* gray-600 */
-      border-radius: 20px;
-      border: 2px solid #2d3748;
-      /* gray-800 */
-    }
-
-    /* Fun effect for textarea on focus */
-    #inputText {
-      transition: box-shadow 0.3s ease-in-out, border-color 0.3s ease-in-out;
-    }
-
-    #inputText:focus {
-      box-shadow: 0 0 12px rgba(99, 102, 241, 0.4);
-      /* Subtle indigo glow */
-    }
-  </style>
+  <link rel="stylesheet" href="style.css">
 </head>
 
 <body class="bg-gray-900 text-gray-200 flex items-center justify-center min-h-screen p-4 sm:p-6">
@@ -59,16 +22,15 @@
     </header>
 
     <main class="bg-gray-800 rounded-xl shadow-2xl p-6 md:p-8">
-      <!-- Input Section -->
       <div class="mb-6">
-        <label for="inputText" class="block text-base sm:text-lg font-medium mb-2 text-gray-300">Nhập văn bản tiếng Anh
-          cần dịch:</label>
+        <label for="inputText" class="block text-base sm:text-lg font-medium mb-2 text-gray-300">
+          Nhập văn bản tiếng Anh cần dịch:
+        </label>
         <textarea id="inputText" rows="5"
           class="w-full p-4 bg-gray-700 border border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 resize-none text-base sm:text-lg"
           placeholder="Nhập từ hoặc câu..."></textarea>
       </div>
 
-      <!-- Controls -->
       <div class="flex items-center justify-end mb-8">
         <button id="translateBtn"
           class="w-full sm:w-auto bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2.5 px-8 rounded-lg transition duration-300 ease-in-out transform hover:scale-105 flex items-center justify-center">
@@ -80,7 +42,6 @@
         </button>
       </div>
 
-      <!-- Output Section -->
       <div class="space-y-6">
         <div>
           <h2 class="text-lg sm:text-xl font-semibold mb-2 text-gray-300">Kết quả: 📝</h2>
@@ -97,201 +58,7 @@
     </footer>
   </div>
 
-  <script>
-    // --- CONFIGURATION ---
-    const CONFIG = {
-      LANG_PAIR: 'en|vi',
-      LANG_CODES: {
-        EN: 'en-US',
-        VI: 'vi-VN'
-      },
-      API_URLS: {
-        TRANSLATE: 'https://api.mymemory.translated.net/get',
-        DICTIONARY: 'https://api.dictionaryapi.dev/api/v2/entries/en/'
-      }
-    };
-
-    // --- DOM ELEMENTS ---
-    const inputText = document.getElementById('inputText');
-    const translateBtn = document.getElementById('translateBtn');
-    const translationOutput = document.getElementById('translationOutput');
-
-    // --- EVENT LISTENERS ---
-    translateBtn.addEventListener('click', handleTranslation);
-    inputText.addEventListener('keydown', (event) => {
-      if (event.key === 'Enter' && !event.shiftKey) {
-        event.preventDefault(); // Prevent new line on Enter
-        handleTranslation();
-      }
-    });
-
-    // --- CORE LOGIC ---
-    async function handleTranslation() {
-      const text = inputText.value.trim();
-      if (!text) {
-        translationOutput.innerHTML = '<span class="text-red-400">Vui lòng nhập văn bản.</span>';
-        return;
-      }
-
-      setLoadingState(true);
-
-      const [translationResult, ipaResult] = await Promise.all([
-        fetchTranslation(text),
-        fetchIPA(text)
-      ]);
-
-      renderOutput(translationResult, ipaResult, text);
-      setLoadingState(false);
-    }
-
-    // --- UI RENDERING ---
-    function renderOutput(translation, ipaData, originalText) {
-      translationOutput.innerHTML = ''; // Clear previous content
-
-      const originalSection = createOriginalTextElement(ipaData, originalText);
-      const separator = createSeparator();
-      const translationSection = createTranslationElement(translation);
-
-      translationOutput.append(originalSection, separator, translationSection);
-    }
-
-    function createOriginalTextElement(ipaData, originalText) {
-      const section = document.createElement('div');
-      section.className = 'flex items-start justify-between gap-3';
-
-      const container = document.createElement('div');
-      container.className = 'flex flex-wrap gap-x-4 gap-y-2';
-
-      if (Array.isArray(ipaData)) {
-        ipaData.forEach(item => {
-          const wordContainer = document.createElement('div');
-          wordContainer.className = 'text-center mb-2';
-          const wordSpan = document.createElement('span');
-          wordSpan.className = 'block text-base sm:text-lg text-white';
-          wordSpan.textContent = item.word;
-          const ipaSpan = document.createElement('span');
-          ipaSpan.className = 'block text-sm text-indigo-300 font-mono';
-          ipaSpan.textContent = item.ipa || ' '; // Use space to maintain alignment
-          wordContainer.append(wordSpan, ipaSpan);
-          container.appendChild(wordContainer);
-        });
-      }
-
-      const speakerButton = createSpeakerButton(originalText, CONFIG.LANG_CODES.EN);
-      section.append(container, speakerButton);
-      return section;
-    }
-
-    function createTranslationElement(translation) {
-      const section = document.createElement('div');
-      section.className = 'flex items-center justify-between gap-3';
-
-      const textElement = document.createElement('p');
-      textElement.className = 'text-base sm:text-lg flex-grow';
-      textElement.textContent = translation;
-
-      const speakerButton = createSpeakerButton(translation, CONFIG.LANG_CODES.VI);
-      section.append(textElement, speakerButton);
-      return section;
-    }
-
-    function createSeparator() {
-      const separator = document.createElement('hr');
-      separator.className = 'my-4 border-gray-600';
-      return separator;
-    }
-
-    function createSpeakerButton(textToSpeak, lang) {
-      const speakerIconSVG = `<svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M9.383 3.076A1 1 0 0110 4v12a1 1 0 01-1.707.707L4.586 13H2a1 1 0 01-1-1V8a1 1 0 011-1h2.586l3.707-3.707a1 1 0 011.09-.217zM14.657 2.929a1 1 0 011.414 0A9.972 9.972 0 0119 10a9.972 9.972 0 01-2.929 7.071 1 1 0 01-1.414-1.414A7.971 7.971 0 0017 10c0-2.21-.894-4.208-2.343-5.657a1 1 0 010-1.414zm-2.828 2.828a1 1 0 011.414 0A5.983 5.983 0 0115 10a5.984 5.984 0 01-1.757 4.243 1 1 0 01-1.414-1.414A3.986 3.986 0 0013 10a3.986 3.986 0 00-1.172-2.828 1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>`;
-      const button = document.createElement('button');
-      button.className = 'p-1 text-gray-400 hover:text-indigo-300 transition-colors flex-shrink-0';
-      button.innerHTML = speakerIconSVG;
-      button.onclick = () => speakText(textToSpeak, lang);
-      return button;
-    }
-
-    function setLoadingState(isLoading) {
-      translateBtn.disabled = isLoading;
-      if (isLoading) {
-        translateBtn.innerHTML = `
-                    <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                      <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                      <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                    </svg>
-                    Đang dịch...`;
-        translationOutput.innerHTML = '<span class="text-gray-400">Đang tải kết quả...</span>';
-      } else {
-        translateBtn.innerHTML = `
-                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
-                    Dịch ⚡️`;
-      }
-    }
-
-    // --- UTILITIES & API CALLS ---
-    function speakText(text, lang) {
-      if ('speechSynthesis' in window) {
-        window.speechSynthesis.cancel(); // Stop any previous speech
-        const utterance = new SpeechSynthesisUtterance(text);
-        utterance.lang = lang;
-        utterance.rate = 1.0;
-        window.speechSynthesis.speak(utterance);
-      } else {
-        console.error('Trình duyệt của bạn không hỗ trợ tính năng phát âm (Web Speech API).');
-      }
-    }
-
-    async function fetchTranslation(text) {
-      try {
-        const url = `${CONFIG.API_URLS.TRANSLATE}?q=${encodeURIComponent(text)}&langpair=${CONFIG.LANG_PAIR}`;
-        const response = await fetch(url);
-        if (!response.ok) throw new Error('Network response was not ok');
-        const data = await response.json();
-        return data.responseStatus === 200 ? data.responseData.translatedText : `Lỗi dịch: ${data.responseDetails}`;
-      } catch (error) {
-        console.error('Translation Error:', error);
-        return 'Không thể kết nối đến máy chủ dịch.';
-      }
-    }
-
-    async function fetchIPA(text) {
-      const words = text.split(/\s+/).filter(word => word.length > 0);
-
-      const ipaPromises = words.map(async (originalWord) => {
-        const cleanedWord = originalWord.replace(/[.,\/#!$%\^&\*;:{}=\-_`~()?]/g, "");
-        if (!cleanedWord) return { word: originalWord, ipa: null };
-
-        const getPhonetic = async (wordToFetch) => {
-          if (!wordToFetch) return null;
-          try {
-            const url = `${CONFIG.API_URLS.DICTIONARY}${wordToFetch}`;
-            const response = await fetch(url);
-            if (!response.ok) return null;
-            const data = await response.json();
-            const phoneticInfo = data[0]?.phonetics?.find(p => p.text);
-            return phoneticInfo?.text || null;
-          } catch {
-            return null; // Fail gracefully
-          }
-        };
-
-        // Attempt 1: Fetch the cleaned word directly.
-        let ipa = await getPhonetic(cleanedWord);
-        // Attempt 2: If not found and it's a plural/possessive, try the singular form.
-        if (!ipa && cleanedWord.toLowerCase().endsWith('s')) {
-          ipa = await getPhonetic(cleanedWord.slice(0, -1));
-        }
-        // Attempt 3: If still not found and it's a contraction, try the base form.
-        if (!ipa && cleanedWord.includes("'")) {
-          ipa = await getPhonetic(cleanedWord.split("'")[0]);
-        }
-
-        return { word: originalWord, ipa };
-      });
-
-      return Promise.all(ipaPromises);
-    }
-  </script>
-
+  <script src="script.js"></script>
 </body>
 
 </html>
