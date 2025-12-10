@@ -1,4 +1,7 @@
-# 🌐 IPA Free — English-Vietnamese Translator & IPA ✨  
+# 🌐 IPA Free — English-Vietnamese Translator & IPA ✨
+
+![IPA Free Banner](https://res.cloudinary.com/dkeupjars/image/upload/v1765379133/other_project/ipavn_banner_gsime7.png)
+
 **Version:** 1.0.0  
 
 A simple, fast, and free translation tool built with **HTML**, **Tailwind CSS**, and **JavaScript**.  
