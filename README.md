@@ -40,20 +40,6 @@ This application allows users to translate text from English to Vietnamese, prov
 
 ---
 
-## 🚀 Getting Started  
-
-Since this is a single-file project, getting started is incredibly simple:
-
-1. **Download the file:**  
-   Clone this repository or simply download the `index.html` file.
-
-2. **Open in browser:**  
-   Open the `index.html` file directly in your favorite web browser (Chrome, Firefox, or Edge).
-
-✅ That’s it! The application will be running locally on your machine.
-
----
-
 ## 👤 Author  
 **[@nconghau](https://github.com/nconghau)**  
 
