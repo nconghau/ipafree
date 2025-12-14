@@ -38,10 +38,6 @@ This application allows users to translate text from English to Vietnamese, prov
 | **Free Dictionary API** | Provides IPA phonetic data (`api.dictionaryapi.dev`) |
 | **Web Speech API** | Browser-native API for text-to-speech (no external dependencies) |
 
----
-
-## 👤 Author  
-**[@nconghau](https://github.com/nconghau)**  
 
 ---
 
